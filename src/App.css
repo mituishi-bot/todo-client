@@ -1,0 +1,154 @@
+/* General Styling */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f9;
+  margin: 0;
+  padding: 0;
+}
+
+.app-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 10px;
+  height: 100vh;
+}
+
+/* Title */
+.title {
+  font-size: 2em;
+  color: #333;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Add Todo Form */
+.form {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+}
+
+.input-area {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin: 10px 0 5px;
+  font-weight: bold;
+}
+
+.title-text,
+.content-text {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+.title-text {
+  margin-bottom: 15px;
+}
+
+.button-area {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.form-button {
+  padding: 10px 15px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.form-button:hover {
+  background-color: #45a049;
+}
+
+button[type="reset"] {
+  background-color: #f44336;
+}
+
+button[type="reset"]:hover {
+  background-color: #e53935;
+}
+
+/* List Styling */
+.list-area {
+  width: 100%;
+  max-width: 800px;
+  margin-top: 30px;
+}
+
+.board {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.boardName {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* Todo Item */
+.done {
+  background-color: #d4edda;
+  border-left: 5px solid #28a745;
+}
+
+.undone {
+  background-color: #fff3cd;
+  border-left: 5px solid #ffc107;
+}
+
+.Todo {
+  margin-bottom: 15px;
+  padding: 15px;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.status {
+  font-size: 0.9em;
+  margin-bottom: 10px;
+}
+
+.status a {
+  text-decoration: none;
+  color: #007bff;
+  margin-right: 15px;
+}
+
+.status a:hover {
+  text-decoration: underline;
+}
+
+table {
+  width: 100%;
+  margin-top: 10px;
+  font-size: 1em;
+}
+
+th {
+  text-align: left;
+  padding-right: 10px;
+  width: 80px;
+}
+
+td {
+  padding-left: 10px;
+  color: #555;
+}
