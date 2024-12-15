@@ -2,14 +2,19 @@ import React from "react";
 
 function List({ tasks, deleteTask }) {
   return (
-    <div>
+    <div className="list-area">
       <h2>タスクリスト</h2>
-      <ul>
+      <ul className="task-list">
         {tasks.map((task) => (
-          <li key={task.id}>
-            <h3>{task.title}</h3>
-            <p>{task.content}</p>
-            <button onClick={() => deleteTask(task.id)}>削除</button>
+          <li key={task.id} className="task-item">
+            <h3 className="task-title">{task.title}</h3>
+            <p className="task-content">{task.content}</p>
+            <button
+              onClick={() => deleteTask(task.id)}
+              className="delete-button"
+            >
+              削除
+            </button>
           </li>
         ))}
       </ul>

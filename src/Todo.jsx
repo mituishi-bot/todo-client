@@ -12,13 +12,13 @@ export default function Todo({
   const className = done ? "done" : "undone";
   const status = done ? "未完了" : "完了";
   const todoDelete = done ? "削除する" : "";
-  const undoStatus = done ? "" : "未達成"; // For marking as "未達成" (unfinished)
+  const undoStatus = done ? "" : "未達成";
 
   return (
     <div className={className}>
       <div className="Todo">
         <div className="status">
-          {/* Toggle task status */}
+          {/* タスクの内容 */}
           <a
             href=""
             onClick={(e) => {
@@ -29,7 +29,7 @@ export default function Todo({
             {status}にする
           </a>
           　　
-          {/* Mark as unfinished ("未達成") */}
+          {/* 未達成 */}
           {!done && (
             <a
               href=""
@@ -41,7 +41,7 @@ export default function Todo({
               {undoStatus}
             </a>
           )}
-          {/* Delete task */}
+          {/* タスク消す */}
           <a
             href=""
             onClick={(e) => {

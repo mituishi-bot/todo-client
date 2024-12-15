@@ -7,7 +7,7 @@ function Add({ addTask }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (title && content) {
-      addTask({ title, content }); // 親コンポーネントの addTask を呼び出す
+      addTask({ title, content }); // 親コンポーネント呼び出す
       setTitle("");
       setContent("");
     }
@@ -15,7 +15,7 @@ function Add({ addTask }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <label>タイトル</label>
+      <label>件名</label>
       <input
         type="text"
         value={title}

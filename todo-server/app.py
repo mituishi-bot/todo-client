@@ -14,6 +14,46 @@ DB_CONFIG = {
     "port": 5432
 }
 
+# ユーザー登録
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+
+    # パスワードをそのまま保存
+    with psycopg.connect(**DB_CONFIG) as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "INSERT INTO users (username, password) VALUES (%s, %s) RETURNING id;",
+                (username, password)  
+            )
+            user_id = cur.fetchone()[0]
+            conn.commit()
+
+    return jsonify({"id": user_id, "username": username}), 201
+
+
+# ログイン
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+
+    # データベースからユーザー情報を取得
+    with psycopg.connect(**DB_CONFIG) as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT id, username, password FROM users WHERE username = %s;", (username,))
+            user = cur.fetchone()
+
+    # パスワードをそのまま比較
+    if user and password == user[2]:  
+        return jsonify({"message": "Login successful!", "username": username}), 200
+    else:
+        return jsonify({"message": "Invalid credentials!"}), 401
+
+
 # タスク一覧を取得
 @app.route('/tasks', methods=['GET'])
 def get_tasks():
@@ -25,6 +65,7 @@ def get_tasks():
                 for row in cur.fetchall()
             ]
     return jsonify(tasks)
+
 
 # 新しいタスクを作成
 @app.route('/tasks', methods=['POST'])
@@ -44,6 +85,7 @@ def create_task():
 
     return jsonify({"id": task_id, "title": title, "content": content, "done": False}), 201
 
+
 # タスクの完了状態を更新
 @app.route('/tasks/<int:task_id>', methods=['PATCH'])
 def update_task(task_id):
@@ -60,6 +102,7 @@ def update_task(task_id):
 
     return jsonify({"id": task_id, "done": done}), 200
 
+
 # タスクを削除
 @app.route('/tasks/<int:task_id>', methods=['DELETE'])
 def delete_task(task_id):
@@ -69,6 +112,7 @@ def delete_task(task_id):
             conn.commit()
 
     return '', 204
+
 
 if __name__ == '__main__':
     app.run(debug=True)
