@@ -3,12 +3,9 @@ import React, { useState } from "react";
 function Login({ onLogin }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // ユーザーのログインをAPI
     fetch("http://localhost:5000/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -16,39 +13,38 @@ function Login({ onLogin }) {
     })
       .then((response) => response.json())
       .then((data) => {
-        if (data.success) {
-          onLogin(data); 
+        if (data && data.token) {
+          onLogin({ id: data.id, username: data.username, token: data.token }); // 正しくデータを渡す
         } else {
-          setError(data.message);
+          alert("ログインに失敗しました。");
         }
       })
-      .catch((err) => setError("エラーが発生しました。"));
+      .catch(() => alert("エラーが発生しました。"));
   };
 
   return (
-    <div>
+    <form onSubmit={handleSubmit}>
       <h2>ログイン</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>ユーザー名</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </div>
-        <div>
-          <label>パスワード</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        {error && <p>{error}</p>}
-        <button type="submit">ログイン</button>
-      </form>
-    </div>
+      <label>
+        ユーザー名:
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+      </label>
+      <br />
+      <label>
+        パスワード:
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </label>
+      <br />
+      <button type="submit">ログイン</button>
+    </form>
   );
 }
 
