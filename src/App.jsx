@@ -6,90 +6,93 @@ import Login from "./Login.jsx";
 import "./App.css";
 
 function App() {
-  const [tasks, setTasks] = useState([]);
-  const [user, setUser] = useState(null); // ログインしたユーザー情報
+  const [tasks, setTasks] = useState([]); // タスクの状態
+  const [user, setUser] = useState(null); // ログインユーザー情報
   const [view, setView] = useState("login"); // 表示画面: login, register, taskboard
-  const [error, setError] = useState(null); // エラー表示用
+  const [error, setError] = useState(null); // エラーメッセージ
 
+  // ユーザーがログインした後にタスクを取得
   useEffect(() => {
     if (user) {
-      // ログイン後にタスクを取得
       fetch("http://localhost:5000/tasks", {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
+        headers: { Authorization: `Bearer ${user.token}` },
       })
         .then((response) => response.json())
         .then((data) => {
-          //ここ更新されない
+          console.log("取得したタスク: ", data); // 追加
           setTasks(data);
         })
-        .catch((err) => setError("タスクの取得に失敗しました。"));
+        .catch(() => {
+          console.error("タスクの取得に失敗しました。");
+          setError("タスクの取得に失敗しました。");
+        });
     }
   }, [user]);
 
-  const handleRegister = (data) => {
-    setUser({
-      id: data.id,
-      username: data.username,
-      token: data.token,
-    });
-    setView("taskboard"); // タスク画面に切り替え
+  // ログイン後・登録後の処理
+  const handleUserChange = (data) => {
+    console.log("登録またはログイン後のデータ:", data);
+    setUser({ id: data.user_id, username: data.username, token: data.token });
+    setView("taskboard");
   };
 
-  const handleLogin = (data) => {
-    setUser({
-      id: data.id,
-      username: data.username,
-      token: data.token,
-    });
-    setView("taskboard"); // タスク画面に切り替え
-  };
-
+  // ログアウト処理
   const handleLogout = () => {
     setUser(null);
     setTasks([]);
-    setView("login"); // ログイン画面に戻る
+    setView("login");
+  };
+
+  // 各画面の表示処理
+  const renderView = () => {
+    switch (view) {
+      case "login": //ログイン系
+        return (
+          <div>
+            {error && <p>{error}</p>}
+            <Login onLogin={handleUserChange} />
+            <p>
+              新規登録はこちら →{" "}
+              <button onClick={() => setView("register")}>登録</button>
+            </p>
+          </div>
+        );
+      case "register": //新規登録画面
+        return (
+          <div>
+            <Register onRegister={handleUserChange} />
+            <p>
+              既にアカウントをお持ちの方 →{" "}
+              <button onClick={() => setView("login")}>ログイン</button>
+            </p>
+          </div>
+        );
+      case "taskboard": //タスクboard
+        return (
+          <div>
+            {user && <p>ようこそ、{user.username}さん</p>}
+            <button onClick={handleLogout}>ログアウト</button>
+            <Add
+              addTask={(newTask) => setTasks([...tasks, newTask])}
+              user={user}
+            />
+            <List
+              tasks={tasks}
+              deleteTask={(taskId) =>
+                setTasks(tasks.filter((task) => task.id !== taskId))
+              }
+            />
+          </div>
+        );
+      default:
+        return null;
+    }
   };
 
   return (
     <div className="app-area">
       <h1 className="title">TaskBoard</h1>
-
-      {view === "login" && (
-        <div>
-          {error && <p>{error}</p>}
-          <Login onLogin={handleLogin} />
-          <p>
-            新規登録はこちら →{" "}
-            <button onClick={() => setView("register")}>登録</button>
-          </p>
-        </div>
-      )}
-
-      {view === "register" && (
-        <div>
-          <Register onRegister={handleRegister} />
-          <p>
-            既にアカウントをお持ちの方 →{" "}
-            <button onClick={() => setView("login")}>ログイン</button>
-          </p>
-        </div>
-      )}
-
-      {view === "taskboard" && user && (
-        <>
-          <p>ようこそ、{user.username}さん</p>
-          <button onClick={handleLogout}>ログアウト</button>
-          <Add addTask={(newTask) => setTasks([...tasks, newTask])} />
-          <List
-            tasks={tasks}
-            deleteTask={(taskId) =>
-              setTasks(tasks.filter((task) => task.id !== taskId))
-            }
-          />
-        </>
-      )}
+      {renderView()}
     </div>
   );
 }

@@ -1,13 +1,39 @@
+//「タスク追加」フォーム
 import React, { useState } from "react";
 
-function Add({ addTask }) {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+function Add({ addTask, user }) {
+  const [title, setTitle] = useState(""); //タイトル
+  const [content, setContent] = useState(""); //タスクの内容
+  const [error, setError] = useState(null); // エラーメッセージ
 
+  console.log("user", user);
+
+  //title と content が両方とも入力されていれば
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    fetch("http://localhost:5000/tasks", {
+      //HTTPメソッド,リクエストヘッダーリクエストボディ
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.token}`,
+      },
+      body: JSON.stringify({ title, content }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          onRegister(data);
+        } else {
+          setError(data.message);
+        }
+      })
+      .catch(() => setError("エラーが発生しました。"));
+
     if (title && content) {
-      addTask({ title, content }); // 親コンポーネント呼び出す
+      addTask({ title, content });
       setTitle("");
       setContent("");
     }
