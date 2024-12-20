@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import Add from "./componets/Add";
 import List from "./componets/List";
 import { useNavigate } from "react-router";
-import "./Home.css"
+import "./Home.css";
 
 function Task() {
   const [tasks, setTasks] = useState([]); // タスクの状態
@@ -31,6 +31,28 @@ function Task() {
     }
   }, [username]);
 
+  const deleteTaskFromDB = async (taskId) => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`http://localhost:5000/tasks/${taskId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("タスクの削除に失敗しました。");
+      }
+
+      // ローカル状態からも削除
+      setTasks(tasks.filter((task) => task.id !== taskId));
+    } catch (error) {
+      console.error("タスク削除エラー:", error);
+      alert("タスクの削除に失敗しました。");
+    }
+  };
+
   // ログアウト処理
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -43,12 +65,7 @@ function Task() {
       {username && <p>ようこそ、{username}さん</p>}
       <button onClick={handleLogout}>ログアウト</button>
       <Add addTask={(newTask) => setTasks([...tasks, newTask])} />
-      <List
-        tasks={tasks}
-        deleteTask={(taskId) =>
-          setTasks(tasks.filter((task) => task.id !== taskId))
-        }
-      />
+      <List tasks={tasks} deleteTask={(taskId) => deleteTaskFromDB(taskId)} />
     </div>
   );
 }
