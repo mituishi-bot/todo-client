@@ -8,6 +8,7 @@ import "./Home.css";
 function Task() {
   const [tasks, setTasks] = useState([]); // タスクの状態
   const [username, setUsername] = useState("");
+
   const navigate = useNavigate();
 
   // ユーザーがログインした後にタスクを取得
@@ -53,6 +54,42 @@ function Task() {
     }
   };
 
+  const editTaskInDB = async (taskId, updatedTask) => {
+    if (!taskId) {
+      // 修正: taskId が正しく渡されているか確認
+      console.error("IDが不正です");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`http://localhost:5000/tasks/${taskId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatedTask),
+      });
+
+      if (!response.ok) {
+        throw new Error("タスクの編集に失敗しました。");
+      }
+
+      const updatedData = await response.json();
+
+      // ローカル状態を更新
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === taskId ? { ...task, ...updatedData } : task
+        )
+      );
+    } catch (error) {
+      console.error("タスク編集エラー:", error);
+      alert("タスクの編集に失敗しました。");
+    }
+  };
+
   // ログアウト処理
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -65,7 +102,11 @@ function Task() {
       {username && <p>ようこそ、{username}さん</p>}
       <button onClick={handleLogout}>ログアウト</button>
       <Add addTask={(newTask) => setTasks([...tasks, newTask])} />
-      <List tasks={tasks} deleteTask={(taskId) => deleteTaskFromDB(taskId)} />
+      <List
+        tasks={tasks}
+        deleteTask={(taskId) => deleteTaskFromDB(taskId)}
+        editTask={(taskId, updatedTask) => editTaskInDB(taskId, updatedTask)}
+      />
     </div>
   );
 }

@@ -167,6 +167,24 @@ def delete_task(current_user_id, task_id):
 
     return '', 204
 
+# タスクの内容を更新
+@app.route('/tasks/<int:task_id>', methods=['PUT'])
+@token_required
+def edit_task(current_user_id, task_id):
+    data = request.get_json()
+    title = data.get('title')
+    content = data.get('content')
+
+    with psycopg.connect(**DB_CONFIG) as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "UPDATE tasks SET title = %s, content = %s WHERE id = %s AND user_id = %s;",
+                (title, content, task_id, current_user_id)
+            )
+            conn.commit()
+
+    return jsonify({"id": task_id, "title": title, "content": content}), 200
+
 
 if __name__ == '__main__':
     app.run(debug=True)

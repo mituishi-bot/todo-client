@@ -2,7 +2,7 @@
 import React from "react";
 import Todo from "./Todo.jsx";
 
-function List({ tasks, deleteTask }) {
+function List({ tasks, deleteTask, editTask }) {
   //タスクの配列,タスク削除
   console.log("タスクデータList.jsx: ", tasks); // 追加
   return (
@@ -12,7 +12,7 @@ function List({ tasks, deleteTask }) {
         {tasks.map((task, index) => (
           // ここではindex、タスクオブジェクト内のtask.id
           <li key={index} className="task-item">
-            <Todo task={task} deleteTask={deleteTask} />
+            <Todo task={task} deleteTask={deleteTask} editTask={editTask} />
           </li>
         ))}
       </ul>
