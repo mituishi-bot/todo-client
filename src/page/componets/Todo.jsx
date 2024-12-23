@@ -1,19 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 function Todo({ task, deleteTask, editTask }) {
-  const { title, content, id, due_date } = task; // Use `due_date` here instead of `deadline`
+  const { title, content, due_date, id } = task;
   const [isEditing, setIsEditing] = useState(false);
   const [newTitle, setNewTitle] = useState(title);
   const [newContent, setNewContent] = useState(content);
+  const [newDueDate, setNewDueDate] = useState("");
 
-  // Format the due_date to a more readable format
+  // 期限の日付をYYYY-MM-DD形式に変換
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString(); // You can adjust the format if needed
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
   };
 
+  useEffect(() => {
+    if (due_date) {
+      setNewDueDate(formatDate(due_date)); // 初期表示のためにフォーマット
+    }
+  }, [due_date]);
+
   const handleEdit = () => {
-    editTask(id, { title: newTitle, content: newContent });
+    editTask(id, {
+      title: newTitle,
+      content: newContent,
+      due_date: newDueDate,
+    });
     setIsEditing(false);
   };
 
@@ -29,6 +43,11 @@ function Todo({ task, deleteTask, editTask }) {
           <textarea
             value={newContent}
             onChange={(e) => setNewContent(e.target.value)}
+          />
+          <input
+            type="date"
+            value={newDueDate}
+            onChange={(e) => setNewDueDate(e.target.value)} // 期限を変更
           />
           <button onClick={handleEdit}>保存</button>
           <button onClick={() => setIsEditing(false)}>キャンセル</button>
@@ -51,7 +70,6 @@ function Todo({ task, deleteTask, editTask }) {
               </tr>
             </tbody>
           </table>
-
           <button onClick={() => setIsEditing(true)}>編集</button>
           <button onClick={() => deleteTask(id)}>削除</button>
         </div>

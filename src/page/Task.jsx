@@ -22,7 +22,7 @@ function Task() {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log("取得したタスク: ", data); // 追加
+          console.log("取得したタスク: ", data);
           setTasks(data);
         })
         .catch(() => {
@@ -32,6 +32,7 @@ function Task() {
     }
   }, [username]);
 
+  //たすくを消す
   const deleteTaskFromDB = async (taskId) => {
     const token = localStorage.getItem("token");
     try {
@@ -54,13 +55,8 @@ function Task() {
     }
   };
 
+  //タスクを編集
   const editTaskInDB = async (taskId, updatedTask) => {
-    if (!taskId) {
-      // 修正: taskId が正しく渡されているか確認
-      console.error("IDが不正です");
-      return;
-    }
-
     const token = localStorage.getItem("token");
     try {
       const response = await fetch(`http://localhost:5000/tasks/${taskId}`, {
@@ -78,7 +74,6 @@ function Task() {
 
       const updatedData = await response.json();
 
-      // ローカル状態を更新
       setTasks((prevTasks) =>
         prevTasks.map((task) =>
           task.id === taskId ? { ...task, ...updatedData } : task
