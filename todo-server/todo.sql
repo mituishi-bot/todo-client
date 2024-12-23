@@ -13,6 +13,7 @@ CREATE TABLE tasks (
     title VARCHAR(255) NOT NULL,
     content TEXT,
     done BOOLEAN NOT NULL DEFAULT FALSE,
+    due_date DATE,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 

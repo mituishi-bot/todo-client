@@ -1,13 +1,18 @@
 import React, { useState } from "react";
 
 function Todo({ task, deleteTask, editTask }) {
-  const { title, content, id } = task;
+  const { title, content, id, due_date } = task; // Use `due_date` here instead of `deadline`
   const [isEditing, setIsEditing] = useState(false);
   const [newTitle, setNewTitle] = useState(title);
   const [newContent, setNewContent] = useState(content);
 
+  // Format the due_date to a more readable format
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString(); // You can adjust the format if needed
+  };
+
   const handleEdit = () => {
-    // task.id を渡す部分で、task.id が正しく渡されていることを確認
     editTask(id, { title: newTitle, content: newContent });
     setIsEditing(false);
   };
@@ -40,8 +45,13 @@ function Todo({ task, deleteTask, editTask }) {
                 <th>内容：</th>
                 <td>{content}</td>
               </tr>
+              <tr>
+                <th>期限：</th>
+                <td>{formatDate(due_date)}</td>
+              </tr>
             </tbody>
           </table>
+
           <button onClick={() => setIsEditing(true)}>編集</button>
           <button onClick={() => deleteTask(id)}>削除</button>
         </div>
