@@ -77,6 +77,35 @@ form button:hover {
   background-color: #2980b9; /* ホバー時の青色 */
 }
 
+/* フォーム内のドロップダウンボタン */
+form select {
+  width: 100%; /* フォームの幅にフィットさせる */
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f9f9f9; /* 優しい背景色 */
+  margin-bottom: 16px;
+  box-sizing: border-box; /* パディングを含む幅計算 */
+}
+
+form select:focus {
+  border-color: #3498db; /* 青色のボーダー */
+  outline: none;
+  background-color: #fff;
+}
+
+/* タスクリスト内のドロップダウン（必要に応じて） */
+.task-item select {
+  width: 80%; /* 必要に応じて調整 */
+  padding: 8px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #fff;
+  margin: 8px 0;
+}
+
 /* タスクリスト */
 .list-area {
   margin-top: 30px;

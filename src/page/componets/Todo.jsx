@@ -9,7 +9,8 @@ function Todo({ task, deleteTask, editTask }) {
   const [newStatus, setNewStatus] = useState(status);
   const [newPriority, setNewPriority] = useState(priority || "Medium");
 
-  // 優先度を日本語に変換
+  const isOverdue = new Date(due_date) < new Date();
+
   const getPriorityLabel = (priority) => {
     switch (priority) {
       case "High":
@@ -23,7 +24,6 @@ function Todo({ task, deleteTask, editTask }) {
     }
   };
 
-  // 期限メッセージを生成
   const getDeadlineMessage = (dueDate) => {
     const currentDate = new Date();
     const due = new Date(dueDate);
@@ -63,7 +63,7 @@ function Todo({ task, deleteTask, editTask }) {
   };
 
   return (
-    <div>
+    <div className={`Todo ${isOverdue ? "overdue" : ""}`}>
       {isEditing ? (
         <div>
           <input
@@ -122,12 +122,10 @@ function Todo({ task, deleteTask, editTask }) {
               <tr>
                 <th>優先度：</th>
                 <td>{getPriorityLabel(priority)}</td>
-              </tr>{" "}
-              {/* 日本語で表示 */}
+              </tr>
             </tbody>
           </table>
-          <p>{getDeadlineMessage(due_date)}</p>{" "}
-          {/* Display the deadline message */}
+          <p>{getDeadlineMessage(due_date)}</p>
           <button onClick={() => setIsEditing(true)}>編集</button>
           <button onClick={() => deleteTask(id)}>削除</button>
         </div>
