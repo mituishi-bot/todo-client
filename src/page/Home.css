@@ -1,10 +1,8 @@
-/* Home.css */
-
 /* アプリ全体の背景とフォントの設定 */
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f5f5f5;
+  font-family: "Arial", sans-serif;
+  background-color: #f4f7fc; /* 優しい背景色 */
   color: #333;
 }
 
@@ -12,18 +10,20 @@ body {
 .title {
   text-align: center;
   font-size: 2.5rem;
-  margin-top: 20px;
-  color: #4caf50;
+  margin-top: 40px;
+  color: #4caf50; /* 明るいグリーン */
+  font-weight: bold;
 }
 
 /* アプリ全体の領域 */
 .app-area {
-  margin: 20px auto;
+  margin: 40px auto;
   max-width: 600px;
-  padding: 20px;
+  padding: 30px;
   background-color: #fff;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e1e1e1; /* 境界線を薄く */
 }
 
 /* フォーム全般 */
@@ -35,16 +35,26 @@ form {
 form label {
   margin-bottom: 8px;
   font-weight: bold;
+  font-size: 1rem;
+  color: #555;
 }
 
 form input,
 form textarea,
 form button {
   margin-bottom: 16px;
-  padding: 10px;
+  padding: 12px;
   font-size: 1rem;
   border: 1px solid #ddd;
   border-radius: 4px;
+  background-color: #fafafa; /* 入力フィールド背景色 */
+}
+
+form input:focus,
+form textarea:focus {
+  border-color: #4caf50; /* フォーカス時に緑色の境界線 */
+  outline: none;
+  background-color: #fff; /* フォーカス時の背景色 */
 }
 
 form button {
@@ -53,6 +63,14 @@ form button {
   border: none;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  font-size: 1.1rem;
+  padding: 12px;
+  font-weight: bold;
+}
+
+form button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
 form button:hover {
@@ -61,7 +79,7 @@ form button:hover {
 
 /* タスクリスト */
 .list-area {
-  margin-top: 20px;
+  margin-top: 30px;
 }
 
 .task-list {
@@ -70,11 +88,12 @@ form button:hover {
 }
 
 .task-item {
-  margin-bottom: 10px;
-  padding: 10px;
-  background-color: #f9f9f9;
+  margin-bottom: 15px;
+  padding: 15px;
+  background-color: #fafafa;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .task-item table {
@@ -84,15 +103,17 @@ form button:hover {
 .task-item th {
   text-align: left;
   width: 20%;
+  color: #4caf50; /* グリーンで強調 */
 }
 
 .task-item td {
   word-wrap: break-word;
+  color: #555;
 }
 
 /* ボタン */
 button {
-  padding: 10px 15px;
+  padding: 12px 20px;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -105,6 +126,7 @@ button:hover {
 /* ログイン・登録画面切り替えボタン */
 p {
   text-align: center;
+  font-size: 1rem;
 }
 
 p button {
@@ -122,9 +144,13 @@ p button:hover {
 
 /* ようこそメッセージ */
 .welcome-message {
-  font-size: 1.5rem; /* 文字サイズをさらに大きく */
-  font-weight: bold; /* 太字で目立たせる */
-  color: #333; /* 落ち着いた濃い文字色 */
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
   margin-bottom: 20px;
-  text-align: center; /* 中央揃え */
+  text-align: center;
+  padding: 10px;
+  background-color: #f1f8e9; /* 明るい背景色で優しく */
+  border: 1px solid #d4e6b5; /* ソフトなグリーンの枠線 */
+  border-radius: 6px;
 }

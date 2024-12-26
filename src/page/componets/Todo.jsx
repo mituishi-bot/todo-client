@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-
 function Todo({ task, deleteTask, editTask }) {
   const { title, content, due_date, id } = task;
   const [isEditing, setIsEditing] = useState(false);
@@ -14,6 +13,26 @@ function Todo({ task, deleteTask, editTask }) {
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
+  };
+
+  // 期限メッセージを生成
+  const getDeadlineMessage = (dueDate) => {
+    const currentDate = new Date();
+    const due = new Date(dueDate);
+    const differenceInTime = due - currentDate;
+    const differenceInDays = Math.ceil(
+      differenceInTime / (1000 * 60 * 60 * 24)
+    );
+
+    if (differenceInDays === 0) {
+      return "期限が今日です！";
+    } else if (differenceInDays === -1) {
+      return "期限が昨日です！";
+    } else if (differenceInDays > 0) {
+      return `期限まであと${differenceInDays}日です。`;
+    } else {
+      return "期限が過ぎています！";
+    }
   };
 
   useEffect(() => {
@@ -67,6 +86,10 @@ function Todo({ task, deleteTask, editTask }) {
               <tr>
                 <th>期限：</th>
                 <td>{formatDate(due_date)}</td>
+              </tr>
+              <tr>
+                <th>状態：</th>
+                <td>{getDeadlineMessage(due_date)}</td>
               </tr>
             </tbody>
           </table>

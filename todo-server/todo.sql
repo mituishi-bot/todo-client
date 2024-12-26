@@ -12,8 +12,7 @@ CREATE TABLE tasks (
     user_id INTEGER NOT NULL,
     title VARCHAR(255) NOT NULL,
     content TEXT,
-    done BOOLEAN NOT NULL DEFAULT FALSE,
+    status VARCHAR(20) NOT NULL DEFAULT '未完了', -- ステータスカラム
     due_date DATE,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
-
