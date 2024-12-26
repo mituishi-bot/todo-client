@@ -18,7 +18,7 @@ function List({ tasks, deleteTask, editTask }) {
     <div className="list-area">
       <h2>タスクリスト</h2>
       <ul className="task-list">
-        {tasks.map((task, index) => (
+        {tasks.map((task) => (
           <li key={task.id} className="task-item">
             <Todo
               task={{ ...task, due_date: formatDate(task.due_date) }}

@@ -98,9 +98,9 @@ def login():
 def get_tasks(current_user_id):
     with psycopg.connect(**DB_CONFIG) as conn:
         with conn.cursor() as cur:
-            cur.execute("SELECT id, title, content, done, due_date FROM tasks WHERE user_id = %s ORDER BY id;", (current_user_id,))
+            cur.execute("SELECT id, title, content, done, due_date, status FROM tasks WHERE user_id = %s ORDER BY id;", (current_user_id,))
             tasks = [
-                {"id": row[0], "title": row[1], "content": row[2], "done": row[3], "due_date": row[4]}
+                {"id": row[0], "title": row[1], "content": row[2], "done": row[3], "due_date": row[4], "status": row[5]}
                 for row in cur.fetchall()
             ]
     return jsonify(tasks)
@@ -114,19 +114,19 @@ def add_task(current_user_id):
     title = data.get('title')
     content = data.get('content')
     due_date = data.get('due_date')  # 期限日を受け取る
+    status = data.get('status', '未完了')  # ステータス（デフォルトは未完了）
     done = False  # 初期状態では未完了にする
     
     if title and content:
         try:
             with psycopg.connect(**DB_CONFIG) as conn:
                 with conn.cursor() as cur:
-                    # 期限を含めてタスクをデータベースに挿入
                     cur.execute(
-                        "INSERT INTO tasks (user_id, title, content, done, due_date) VALUES (%s, %s, %s, %s, %s) RETURNING id;",
-                        (current_user_id, title, content, done, due_date)
+                        "INSERT INTO tasks (user_id, title, content, done, due_date, status) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id;",
+                        (current_user_id, title, content, done, due_date, status)
                     )
                     task_id = cur.fetchone()[0]
-            return jsonify({"id": task_id, "title": title, "content": content, "done": done, "due_date": due_date}), 201
+            return jsonify({"id": task_id, "title": title, "content": content, "done": done, "due_date": due_date, "status": status}), 201
         except Exception as e:
             return jsonify({"error": "タスクの追加に失敗しました。"}), 500
     else:
@@ -162,6 +162,7 @@ def delete_task(current_user_id, task_id):
 
     return '', 204
 
+
 # タスクの内容を更新
 @app.route('/tasks/<int:task_id>', methods=['PUT'])
 @token_required
@@ -170,16 +171,17 @@ def edit_task(current_user_id, task_id):
     title = data.get('title')
     content = data.get('content')
     due_date = data.get('due_date')  # 期限日も受け取る
+    status = data.get('status')  # ステータスを受け取る（更新用）
 
     with psycopg.connect(**DB_CONFIG) as conn:
         with conn.cursor() as cur:
             cur.execute(
-                "UPDATE tasks SET title = %s, content = %s, due_date = %s WHERE id = %s AND user_id = %s;",
-                (title, content, due_date, task_id, current_user_id)
+                "UPDATE tasks SET title = %s, content = %s, due_date = %s, status = %s WHERE id = %s AND user_id = %s;",
+                (title, content, due_date, status, task_id, current_user_id)
             )
             conn.commit()
 
-    return jsonify({"id": task_id, "title": title, "content": content, "due_date": due_date}), 200
+    return jsonify({"id": task_id, "title": title, "content": content, "due_date": due_date, "status": status}), 200
 
 
 if __name__ == '__main__':

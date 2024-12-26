@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+
 function Todo({ task, deleteTask, editTask }) {
-  const { title, content, due_date, id } = task;
+  const { title, content, due_date, status, id } = task;
   const [isEditing, setIsEditing] = useState(false);
   const [newTitle, setNewTitle] = useState(title);
   const [newContent, setNewContent] = useState(content);
   const [newDueDate, setNewDueDate] = useState("");
+  const [newStatus, setNewStatus] = useState(status); // 状態の追加
 
   // 期限の日付をYYYY-MM-DD形式に変換
   const formatDate = (dateString) => {
@@ -46,6 +48,7 @@ function Todo({ task, deleteTask, editTask }) {
       title: newTitle,
       content: newContent,
       due_date: newDueDate,
+      status: newStatus,
     });
     setIsEditing(false);
   };
@@ -68,6 +71,14 @@ function Todo({ task, deleteTask, editTask }) {
             value={newDueDate}
             onChange={(e) => setNewDueDate(e.target.value)} // 期限を変更
           />
+          <select
+            value={newStatus} // ステータスを変更
+            onChange={(e) => setNewStatus(e.target.value)}
+          >
+            <option value="未完了">未完了</option>
+            <option value="進行中">進行中</option>
+            <option value="完了">完了</option>
+          </select>
           <button onClick={handleEdit}>保存</button>
           <button onClick={() => setIsEditing(false)}>キャンセル</button>
         </div>
@@ -86,6 +97,10 @@ function Todo({ task, deleteTask, editTask }) {
               <tr>
                 <th>期限：</th>
                 <td>{formatDate(due_date)}</td>
+              </tr>
+              <tr>
+                <th>ステータス：</th>
+                <td>{newStatus}</td> {/* 更新されたステータス */}
               </tr>
               <tr>
                 <th>状態：</th>
