@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 
 function Add({ addTask }) {
-  const [title, setTitle] = useState(""); //タイトル
-  const [content, setContent] = useState(""); //タスクの内容
-  const [dueDate, setDueDate] = useState(""); // 期限
-  const [error, setError] = useState(null); // エラーメッセージ
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [priority, setPriority] = useState("Medium"); // New state for priority
+  const [error, setError] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -15,15 +16,16 @@ function Add({ addTask }) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ title, content, due_date: dueDate }),
+      body: JSON.stringify({ title, content, due_date: dueDate, priority }),
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.id) {
-          addTask(data);  // 親コンポーネントに新しいタスクを追加する関数を渡す
+          addTask(data);
           setTitle("");
           setContent("");
           setDueDate("");
+          setPriority("Medium");
         } else {
           setError(data.message);
         }
@@ -47,6 +49,12 @@ function Add({ addTask }) {
         value={dueDate}
         onChange={(e) => setDueDate(e.target.value)}
       />
+      <label>優先度</label>
+      <select value={priority} onChange={(e) => setPriority(e.target.value)}>
+        <option value="High">高</option>
+        <option value="Medium">中</option>
+        <option value="Low">低</option>
+      </select>
       <button type="submit">タスク追加</button>
       {error && <p>{error}</p>}
     </form>

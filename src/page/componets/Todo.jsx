@@ -1,20 +1,26 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 function Todo({ task, deleteTask, editTask }) {
-  const { title, content, due_date, status, id } = task;
+  const { title, content, due_date, status, priority, id } = task;
   const [isEditing, setIsEditing] = useState(false);
   const [newTitle, setNewTitle] = useState(title);
   const [newContent, setNewContent] = useState(content);
   const [newDueDate, setNewDueDate] = useState("");
   const [newStatus, setNewStatus] = useState(status);
+  const [newPriority, setNewPriority] = useState(priority || "Medium");
 
-  // 期限の日付をYYYY-MM-DD形式に変換
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
+  // 優先度を日本語に変換
+  const getPriorityLabel = (priority) => {
+    switch (priority) {
+      case "High":
+        return "高";
+      case "Medium":
+        return "中";
+      case "Low":
+        return "低";
+      default:
+        return "不明";
+    }
   };
 
   // 期限メッセージを生成
@@ -37,28 +43,27 @@ function Todo({ task, deleteTask, editTask }) {
     }
   };
 
-  useEffect(() => {
-    if (due_date) {
-      setNewDueDate(formatDate(due_date)); // 初期表示のためにフォーマット
-    }
-  }, [due_date]);
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
-  // タスクが期限切れかどうかを確認
-  const isOverdue = new Date(due_date) < new Date();
-
-  // 編集の処理
   const handleEdit = () => {
     editTask(id, {
       title: newTitle,
       content: newContent,
       due_date: newDueDate,
       status: newStatus,
+      priority: newPriority,
     });
     setIsEditing(false);
   };
 
   return (
-    <div className={`Todo ${isOverdue ? "overdue" : ""}`}>
+    <div>
       {isEditing ? (
         <div>
           <input
@@ -83,6 +88,14 @@ function Todo({ task, deleteTask, editTask }) {
             <option value="進行中">進行中</option>
             <option value="完了">完了</option>
           </select>
+          <select
+            value={newPriority}
+            onChange={(e) => setNewPriority(e.target.value)}
+          >
+            <option value="High">高</option>
+            <option value="Medium">中</option>
+            <option value="Low">低</option>
+          </select>
           <button onClick={handleEdit}>保存</button>
           <button onClick={() => setIsEditing(false)}>キャンセル</button>
         </div>
@@ -104,14 +117,17 @@ function Todo({ task, deleteTask, editTask }) {
               </tr>
               <tr>
                 <th>ステータス：</th>
-                <td>{newStatus}</td>
+                <td>{status}</td>
               </tr>
               <tr>
-                <th>状態：</th>
-                <td>{getDeadlineMessage(due_date)}</td>
-              </tr>
+                <th>優先度：</th>
+                <td>{getPriorityLabel(priority)}</td>
+              </tr>{" "}
+              {/* 日本語で表示 */}
             </tbody>
           </table>
+          <p>{getDeadlineMessage(due_date)}</p>{" "}
+          {/* Display the deadline message */}
           <button onClick={() => setIsEditing(true)}>編集</button>
           <button onClick={() => deleteTask(id)}>削除</button>
         </div>

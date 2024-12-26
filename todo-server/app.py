@@ -98,12 +98,13 @@ def login():
 def get_tasks(current_user_id):
     with psycopg.connect(**DB_CONFIG) as conn:
         with conn.cursor() as cur:
-            cur.execute("SELECT id, title, content, done, due_date, status FROM tasks WHERE user_id = %s ORDER BY id;", (current_user_id,))
+            cur.execute("SELECT id, title, content, done, due_date, status, priority FROM tasks WHERE user_id = %s ORDER BY priority DESC, due_date ASC;", (current_user_id,))
             tasks = [
-                {"id": row[0], "title": row[1], "content": row[2], "done": row[3], "due_date": row[4], "status": row[5]}
+                {"id": row[0], "title": row[1], "content": row[2], "done": row[3], "due_date": row[4], "status": row[5], "priority": row[6]}
                 for row in cur.fetchall()
             ]
     return jsonify(tasks)
+
 
 
 # 新しいタスクを作成
@@ -113,20 +114,21 @@ def add_task(current_user_id):
     data = request.get_json()
     title = data.get('title')
     content = data.get('content')
-    due_date = data.get('due_date')  # 期限日を受け取る
-    status = data.get('status', '未完了')  # ステータス（デフォルトは未完了）
-    done = False  # 初期状態では未完了にする
+    due_date = data.get('due_date')
+    status = data.get('status', '未完了')
+    priority = data.get('priority', 'Medium')  # Default to 'Medium' priority
+    done = False
     
     if title and content:
         try:
             with psycopg.connect(**DB_CONFIG) as conn:
                 with conn.cursor() as cur:
                     cur.execute(
-                        "INSERT INTO tasks (user_id, title, content, done, due_date, status) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id;",
-                        (current_user_id, title, content, done, due_date, status)
+                        "INSERT INTO tasks (user_id, title, content, done, due_date, status, priority) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id;",
+                        (current_user_id, title, content, done, due_date, status, priority)
                     )
                     task_id = cur.fetchone()[0]
-            return jsonify({"id": task_id, "title": title, "content": content, "done": done, "due_date": due_date, "status": status}), 201
+            return jsonify({"id": task_id, "title": title, "content": content, "done": done, "due_date": due_date, "status": status, "priority": priority}), 201
         except Exception as e:
             return jsonify({"error": "タスクの追加に失敗しました。"}), 500
     else:
