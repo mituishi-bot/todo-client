@@ -19,8 +19,8 @@ function Add({ addTask }) {
     })
       .then((response) => response.json())
       .then((data) => {
-        if (data.success) {
-          addTask(data);
+        if (data.id) {
+          addTask(data);  // 親コンポーネントに新しいタスクを追加する関数を渡す
           setTitle("");
           setContent("");
           setDueDate("");
@@ -48,6 +48,7 @@ function Add({ addTask }) {
         onChange={(e) => setDueDate(e.target.value)}
       />
       <button type="submit">タスク追加</button>
+      {error && <p>{error}</p>}
     </form>
   );
 }

@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import Add from "./componets/Add";
 import List from "./componets/List";
 import { useNavigate } from "react-router";
@@ -8,7 +7,6 @@ import "./Home.css";
 function Task() {
   const [tasks, setTasks] = useState([]); // タスクの状態
   const [username, setUsername] = useState("");
-
   const navigate = useNavigate();
 
   // ユーザーがログインした後にタスクを取得
@@ -22,17 +20,15 @@ function Task() {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log("取得したタスク: ", data);
           setTasks(data);
         })
         .catch(() => {
           console.error("タスクの取得に失敗しました。");
-          setError("タスクの取得に失敗しました。");
         });
     }
   }, [username]);
 
-  //たすくを消す
+  // タスクを削除する関数
   const deleteTaskFromDB = async (taskId) => {
     const token = localStorage.getItem("token");
     try {
@@ -55,7 +51,7 @@ function Task() {
     }
   };
 
-  //タスクを編集
+  // タスクを編集する関数
   const editTaskInDB = async (taskId, updatedTask) => {
     const token = localStorage.getItem("token");
     try {
@@ -92,15 +88,20 @@ function Task() {
     navigate("/");
   };
 
+  // 新しいタスクを追加する関数
+  const addTask = (newTask) => {
+    setTasks((prevTasks) => [...prevTasks, newTask]);
+  };
+
   return (
     <div>
       {username && <p>ようこそ、{username}さん</p>}
       <button onClick={handleLogout}>ログアウト</button>
-      <Add addTask={(newTask) => setTasks([...tasks, newTask])} />
+      <Add addTask={addTask} />
       <List
         tasks={tasks}
-        deleteTask={(taskId) => deleteTaskFromDB(taskId)}
-        editTask={(taskId, updatedTask) => editTaskInDB(taskId, updatedTask)}
+        deleteTask={deleteTaskFromDB}
+        editTask={editTaskInDB}
       />
     </div>
   );
