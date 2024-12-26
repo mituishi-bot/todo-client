@@ -6,7 +6,7 @@ function Todo({ task, deleteTask, editTask }) {
   const [newTitle, setNewTitle] = useState(title);
   const [newContent, setNewContent] = useState(content);
   const [newDueDate, setNewDueDate] = useState("");
-  const [newStatus, setNewStatus] = useState(status); // 状態の追加
+  const [newStatus, setNewStatus] = useState(status);
 
   // 期限の日付をYYYY-MM-DD形式に変換
   const formatDate = (dateString) => {
@@ -43,6 +43,10 @@ function Todo({ task, deleteTask, editTask }) {
     }
   }, [due_date]);
 
+  // タスクが期限切れかどうかを確認
+  const isOverdue = new Date(due_date) < new Date();
+
+  // 編集の処理
   const handleEdit = () => {
     editTask(id, {
       title: newTitle,
@@ -54,7 +58,7 @@ function Todo({ task, deleteTask, editTask }) {
   };
 
   return (
-    <div className="Todo">
+    <div className={`Todo ${isOverdue ? "overdue" : ""}`}>
       {isEditing ? (
         <div>
           <input
@@ -69,10 +73,10 @@ function Todo({ task, deleteTask, editTask }) {
           <input
             type="date"
             value={newDueDate}
-            onChange={(e) => setNewDueDate(e.target.value)} // 期限を変更
+            onChange={(e) => setNewDueDate(e.target.value)}
           />
           <select
-            value={newStatus} // ステータスを変更
+            value={newStatus}
             onChange={(e) => setNewStatus(e.target.value)}
           >
             <option value="未完了">未完了</option>
@@ -100,7 +104,7 @@ function Todo({ task, deleteTask, editTask }) {
               </tr>
               <tr>
                 <th>ステータス：</th>
-                <td>{newStatus}</td> {/* 更新されたステータス */}
+                <td>{newStatus}</td>
               </tr>
               <tr>
                 <th>状態：</th>
