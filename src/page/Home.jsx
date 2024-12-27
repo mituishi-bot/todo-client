@@ -1,3 +1,4 @@
+//新規登録orログイン
 import React, { useState } from "react";
 import Register from "./componets/Register.jsx";
 import Login from "./componets/Login.jsx";

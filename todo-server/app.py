@@ -5,6 +5,8 @@ import jwt
 import datetime
 from functools import wraps
 
+
+#Flaskアプリケーション、CORESの有効化
 app = Flask(__name__)
 CORS(app)
 
@@ -23,6 +25,7 @@ SECRET_KEY = "your_secret_key"
 
 # # トークン検証用デコレーター
 def token_required(f):
+    #元の関数のメタデータ
     @wraps(f)
     def decorated_function(*args, **kwargs):
         token = None
@@ -77,7 +80,7 @@ def login():
     with psycopg.connect(**DB_CONFIG) as conn:
         with conn.cursor() as cur:
             cur.execute("SELECT id, username, password FROM users WHERE username = %s;", (username,))
-            user = cur.fetchone()
+            user = cur.fetchone()#データベースからユーザー名
 
     if user and password == user[2]:  # パスワードをそのまま比較
         # JWTトークンを生成
@@ -116,7 +119,7 @@ def add_task(current_user_id):
     content = data.get('content')
     due_date = data.get('due_date')
     status = data.get('status', '未完了')
-    priority = data.get('priority', 'Medium')  # Default to 'Medium' priority
+    priority = data.get('priority', 'Medium')  
     done = False
     
     if title and content:

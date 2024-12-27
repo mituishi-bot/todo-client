@@ -1,3 +1,4 @@
+//タスクをデータベース
 import { useState, useEffect } from "react";
 import Add from "./componets/Add";
 import List from "./componets/List";

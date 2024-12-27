@@ -3,16 +3,9 @@ import React, { useState } from "react";
 import Todo from "./Todo.jsx";
 
 function List({ tasks, deleteTask, editTask }) {
-  const [sortConfig, setSortConfig] = useState({ key: "added", order: "asc" });
+  const [sortConfig, setSortConfig] = useState({ key: "added", order: "asc" }); //ソートの基準と順序
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
-
+  //タスクをソートする処理
   const sortedTasks = [...tasks].sort((a, b) => {
     let compare = 0;
 
@@ -22,12 +15,13 @@ function List({ tasks, deleteTask, editTask }) {
     } else if (sortConfig.key === "dueDate") {
       compare = new Date(a.due_date) - new Date(b.due_date);
     } else if (sortConfig.key === "added") {
-      compare = a.id - b.id;
+      compare = a.id - b.id; //タスクを追加順で比較
     }
 
     return sortConfig.order === "asc" ? compare : -compare;
   });
 
+  //ソートの切り替え処理
   const toggleSort = (key) => {
     setSortConfig((prev) => {
       if (prev.key === key) {

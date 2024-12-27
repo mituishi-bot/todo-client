@@ -47,7 +47,7 @@ form button {
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 4px;
-  background-color: #f9f9f9; /* 優しい背景色 */
+  background-color: #f9f9f9; 
 }
 
 form input:focus,
@@ -84,7 +84,7 @@ form select {
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 4px;
-  background-color: #f9f9f9; /* 優しい背景色 */
+  background-color: #f9f9f9; 
   margin-bottom: 16px;
   box-sizing: border-box; /* パディングを含む幅計算 */
 }

@@ -1,16 +1,18 @@
+//編集モード
 import React, { useState } from "react";
 
 function Todo({ task, deleteTask, editTask }) {
-  const { title, content, due_date, status, priority, id } = task;
-  const [isEditing, setIsEditing] = useState(false);
-  const [newTitle, setNewTitle] = useState(title);
-  const [newContent, setNewContent] = useState(content);
-  const [newDueDate, setNewDueDate] = useState("");
-  const [newStatus, setNewStatus] = useState(status);
-  const [newPriority, setNewPriority] = useState(priority || "Medium");
+  const { title, content, due_date, status, priority, id } = task; // タスクのプロパティを展開
+  const [isEditing, setIsEditing] = useState(false); //編集モード
+  const [newTitle, setNewTitle] = useState(title); //タイトルの新しい値
+  const [newContent, setNewContent] = useState(content); //内容の新しい値
+  const [newDueDate, setNewDueDate] = useState(""); //新しい期限の新しい値
+  const [newStatus, setNewStatus] = useState(status); //ステータスの新しい値
+  const [newPriority, setNewPriority] = useState(priority || "Medium"); //優先度の新しい値
 
-  const isOverdue = new Date(due_date) < new Date();
+  const isOverdue = new Date(due_date) < new Date(); //期限切れかどうか
 
+  //優先度のラベルを所得する関数
   const getPriorityLabel = (priority) => {
     switch (priority) {
       case "High":
@@ -24,6 +26,7 @@ function Todo({ task, deleteTask, editTask }) {
     }
   };
 
+  //締め切りに応じたmessageを作成する関数
   const getDeadlineMessage = (dueDate) => {
     const currentDate = new Date();
     const due = new Date(dueDate);
@@ -43,6 +46,7 @@ function Todo({ task, deleteTask, editTask }) {
     }
   };
 
+  //日付をフォーマットする関数
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -51,6 +55,7 @@ function Todo({ task, deleteTask, editTask }) {
     return `${year}-${month}-${day}`;
   };
 
+  //編集内容を保存する関数
   const handleEdit = () => {
     // 新しい期限が空でない場合はそれを使用し、空の場合は元の期限を使用
     const finalDueDate = newDueDate || due_date;
@@ -58,12 +63,12 @@ function Todo({ task, deleteTask, editTask }) {
     editTask(id, {
       title: newTitle,
       content: newContent,
-      due_date: finalDueDate, // 修正した部分
+      due_date: finalDueDate,
       status: newStatus,
       priority: newPriority,
     });
 
-    setIsEditing(false);
+    setIsEditing(false); //編集終了
   };
 
   return (
@@ -72,20 +77,20 @@ function Todo({ task, deleteTask, editTask }) {
         <div>
           <input
             type="text"
-            value={newTitle}
+            value={newTitle} //タイトルを編集する入力フォーム
             onChange={(e) => setNewTitle(e.target.value)}
           />
           <textarea
-            value={newContent}
+            value={newContent} //内容を編集する入力フォーム
             onChange={(e) => setNewContent(e.target.value)}
           />
           <input
             type="date"
-            value={newDueDate}
+            value={newDueDate} //締切日を編集する入力フォーム
             onChange={(e) => setNewDueDate(e.target.value)}
           />
           <select
-            value={newStatus}
+            value={newStatus} //ステータスを編集するセレクトボックス
             onChange={(e) => setNewStatus(e.target.value)}
           >
             <option value="未完了">未完了</option>
@@ -93,7 +98,7 @@ function Todo({ task, deleteTask, editTask }) {
             <option value="完了">完了</option>
           </select>
           <select
-            value={newPriority}
+            value={newPriority} //優先度を編集するセレクトボックス
             onChange={(e) => setNewPriority(e.target.value)}
           >
             <option value="High">高</option>
@@ -104,6 +109,7 @@ function Todo({ task, deleteTask, editTask }) {
           <button onClick={() => setIsEditing(false)}>キャンセル</button>
         </div>
       ) : (
+        // 通常表示モードの場合
         <div>
           <table>
             <tbody>

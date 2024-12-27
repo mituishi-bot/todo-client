@@ -4,7 +4,7 @@ import React, { useState } from "react";
 function Register({ onRegister }) {
   const [username, setUsername] = useState(""); //入力されたユーザー名を保持
   const [password, setPassword] = useState(""); //入力されたパスWordを保持
-  const [error, setError] = useState(""); //エラーmessage
+  const [error, setError] = useState(""); //エラーメッセージ
 
   const handleSubmit = (e) => {
     e.preventDefault();
