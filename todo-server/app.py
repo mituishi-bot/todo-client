@@ -172,19 +172,27 @@ def edit_task(current_user_id, task_id):
     data = request.get_json()
     title = data.get('title')
     content = data.get('content')
-    due_date = data.get('due_date')  # 期限日も受け取る
-    status = data.get('status')  # ステータスを受け取る（更新用）
+    due_date = data.get('due_date') if data.get('due_date') else None  # Noneに変換
+    status = data.get('status')
+    priority = data.get('priority')
 
     with psycopg.connect(**DB_CONFIG) as conn:
         with conn.cursor() as cur:
+            # 既存の due_date を保持
+            cur.execute("SELECT due_date FROM tasks WHERE id = %s AND user_id = %s;", (task_id, current_user_id))
+            current_due_date = cur.fetchone()[0]
+
             cur.execute(
-                "UPDATE tasks SET title = %s, content = %s, due_date = %s, status = %s WHERE id = %s AND user_id = %s;",
-                (title, content, due_date, status, task_id, current_user_id)
+                """
+                UPDATE tasks 
+                SET title = %s, content = %s, due_date = %s, status = %s, priority = %s 
+                WHERE id = %s AND user_id = %s;
+                """,
+                (title, content, due_date if due_date is not None else current_due_date, status, priority, task_id, current_user_id)
             )
             conn.commit()
 
-    return jsonify({"id": task_id, "title": title, "content": content, "due_date": due_date, "status": status}), 200
-
+    return jsonify({"id": task_id, "title": title, "content": content, "due_date": due_date or current_due_date, "status": status, "priority": priority}), 200
 
 if __name__ == '__main__':
     app.run(debug=True)

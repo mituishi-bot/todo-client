@@ -52,13 +52,17 @@ function Todo({ task, deleteTask, editTask }) {
   };
 
   const handleEdit = () => {
+    // 新しい期限が空でない場合はそれを使用し、空の場合は元の期限を使用
+    const finalDueDate = newDueDate || due_date;
+
     editTask(id, {
       title: newTitle,
       content: newContent,
-      due_date: newDueDate,
+      due_date: finalDueDate, // 修正した部分
       status: newStatus,
       priority: newPriority,
     });
+
     setIsEditing(false);
   };
 
