@@ -1,12 +1,18 @@
-//タスク一覧を表示する
+//タスクの検索とソート
 import React, { useState } from "react";
 import Todo from "./Todo.jsx";
 
 function List({ tasks, deleteTask, editTask }) {
-  const [sortConfig, setSortConfig] = useState({ key: "added", order: "asc" }); //ソートの基準と順序
+  const [sortConfig, setSortConfig] = useState({ key: "added", order: "asc" }); // ソートの基準と順序
+  const [searchQuery, setSearchQuery] = useState(""); // 検索クエリ
 
-  //タスクをソートする処理
-  const sortedTasks = [...tasks].sort((a, b) => {
+  // 検索クエリでフィルタリング
+  const filteredTasks = tasks.filter((task) => {
+    return task.title?.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+
+  // タスクをソートする処理
+  const sortedTasks = filteredTasks.sort((a, b) => {
     let compare = 0;
 
     if (sortConfig.key === "priority") {
@@ -15,13 +21,13 @@ function List({ tasks, deleteTask, editTask }) {
     } else if (sortConfig.key === "dueDate") {
       compare = new Date(a.due_date) - new Date(b.due_date);
     } else if (sortConfig.key === "added") {
-      compare = a.id - b.id; //タスクを追加順で比較
+      compare = a.id - b.id; // タスクを追加順で比較
     }
 
     return sortConfig.order === "asc" ? compare : -compare;
   });
 
-  //ソートの切り替え処理
+  // ソートの切り替え処理
   const toggleSort = (key) => {
     setSortConfig((prev) => {
       if (prev.key === key) {
@@ -34,7 +40,8 @@ function List({ tasks, deleteTask, editTask }) {
   return (
     <div className="list-area">
       <h2>タスクリスト</h2>
-      <div className="sort-buttons">
+
+      <div className="tasks-buttons">
         <button onClick={() => toggleSort("priority")}>
           優先順{" "}
           {sortConfig.key === "priority"
@@ -59,7 +66,17 @@ function List({ tasks, deleteTask, editTask }) {
               : "▼"
             : ""}
         </button>
+        <div className="search-buttons">
+          <input
+            type="text"
+            placeholder="件名で検索..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <button onClick={() => setSearchQuery("")}>クリア</button>
+        </div>
       </div>
+
       <ul className="task-list">
         {sortedTasks.map((task) => (
           <li key={task.id} className="task-item">

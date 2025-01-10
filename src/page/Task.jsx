@@ -96,8 +96,11 @@ function Task() {
 
   return (
     <div>
-      {username && <p>ようこそ、{username}さん</p>}
-      <button onClick={handleLogout}>ログアウト</button>
+      {username && <p className="welcome-message">ようこそ、{username}さん</p>}
+      <div className="logout">
+        <button onClick={handleLogout}>ログアウト</button>
+      </div>
+
       <Add addTask={addTask} />
       <List
         tasks={tasks}
