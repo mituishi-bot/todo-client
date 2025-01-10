@@ -1,14 +1,20 @@
-//タスクの検索とソート
 import React, { useState } from "react";
 import Todo from "./Todo.jsx";
 
 function List({ tasks, deleteTask, editTask }) {
   const [sortConfig, setSortConfig] = useState({ key: "added", order: "asc" }); // ソートの基準と順序
   const [searchQuery, setSearchQuery] = useState(""); // 検索クエリ
+  const [dateQuery, setDateQuery] = useState(""); // 日付検索クエリ
 
   // 検索クエリでフィルタリング
   const filteredTasks = tasks.filter((task) => {
-    return task.title?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesTitle = task.title
+      ?.toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    const matchesDate = dateQuery
+      ? new Date(task.due_date).toISOString().slice(0, 10) === dateQuery
+      : true;
+    return matchesTitle && matchesDate;
   });
 
   // タスクをソートする処理
@@ -67,13 +73,23 @@ function List({ tasks, deleteTask, editTask }) {
             : ""}
         </button>
         <div className="search-buttons">
-          <input
-            type="text"
-            placeholder="件名で検索..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <button onClick={() => setSearchQuery("")}>クリア</button>
+          <div className="title-search">
+            <input
+              type="text"
+              placeholder="件名で検索..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button onClick={() => setSearchQuery("")}>クリア</button>
+          </div>
+          <div className="date-search">
+            <input
+              type="date"
+              value={dateQuery}
+              onChange={(e) => setDateQuery(e.target.value)}
+            />
+            <button onClick={() => setDateQuery("")}>日付クリア</button>
+          </div>
         </div>
       </div>
 
