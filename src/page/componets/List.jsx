@@ -85,6 +85,7 @@ function List({ tasks, deleteTask, editTask }) {
           <div className="date-search">
             <input
               type="date"
+              placeholder="YYYY-MM-DDのみ検索..."
               value={dateQuery}
               onChange={(e) => setDateQuery(e.target.value)}
             />

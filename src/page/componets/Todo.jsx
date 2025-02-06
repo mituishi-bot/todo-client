@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 
 function Todo({ task, deleteTask, editTask }) {
-  const { title, content, due_date, status, priority, id } = task; // タスクのプロパティを展開
+  const { title, content, due_date, status, priority, id, progress } = task; // タスクのプロパティを展開
   const [isEditing, setIsEditing] = useState(false); //編集モード
   const [newTitle, setNewTitle] = useState(title); //タイトルの新しい値
   const [newContent, setNewContent] = useState(content); //内容の新しい値
@@ -10,7 +10,29 @@ function Todo({ task, deleteTask, editTask }) {
   const [newStatus, setNewStatus] = useState(status); //ステータスの新しい値
   const [newPriority, setNewPriority] = useState(priority || "Medium"); //優先度の新しい値
 
+  const [newProgress, setNewProgress] = useState(
+    status === "未完了"
+      ? 0
+      : status === "進行中"
+      ? progress >= 1 && progress <= 99
+        ? progress
+        : 50
+      : 100
+  );
+
   const isOverdue = new Date(due_date) < new Date(); //期限切れかどうか
+
+  // ステータス変更時に進捗を更新
+  const handleStatusChange = (newStatus) => {
+    setNewStatus(newStatus);
+    if (newStatus === "未完了") {
+      setNewProgress(0);
+    } else if (newStatus === "進行中") {
+      setNewProgress(50); // 進行中の初期進捗は50%に設定
+    } else if (newStatus === "完了") {
+      setNewProgress(100);
+    }
+  };
 
   //優先度のラベルを所得する関数
   const getPriorityLabel = (priority) => {
@@ -66,6 +88,7 @@ function Todo({ task, deleteTask, editTask }) {
       due_date: finalDueDate,
       status: newStatus,
       priority: newPriority,
+      progress: newProgress,
     });
 
     setIsEditing(false); //編集終了
@@ -91,12 +114,19 @@ function Todo({ task, deleteTask, editTask }) {
           />
           <select
             value={newStatus} //ステータスを編集するセレクトボックス
-            onChange={(e) => setNewStatus(e.target.value)}
+            onChange={(e) => handleStatusChange(e.target.value)}
           >
             <option value="未完了">未完了</option>
             <option value="進行中">進行中</option>
             <option value="完了">完了</option>
           </select>
+          <input
+            type="number"
+            min="0"
+            max="100"
+            value={newProgress}
+            onChange={(e) => setNewProgress(e.target.value)}
+          />
           <select
             value={newPriority} //優先度を編集するセレクトボックス
             onChange={(e) => setNewPriority(e.target.value)}
@@ -105,6 +135,7 @@ function Todo({ task, deleteTask, editTask }) {
             <option value="Medium">中</option>
             <option value="Low">低</option>
           </select>
+
           <button onClick={handleEdit}>保存</button>
           <button onClick={() => setIsEditing(false)}>キャンセル</button>
         </div>
@@ -128,6 +159,10 @@ function Todo({ task, deleteTask, editTask }) {
               <tr>
                 <th>ステータス：</th>
                 <td>{status}</td>
+              </tr>
+              <tr>
+                <th>進捗度：</th>
+                <td>{newProgress}%</td>
               </tr>
               <tr>
                 <th>優先度：</th>

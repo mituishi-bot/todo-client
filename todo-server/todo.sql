@@ -16,5 +16,6 @@ CREATE TABLE tasks (
     due_date DATE,
     priority VARCHAR(10) DEFAULT 'Medium',
     status VARCHAR(20) DEFAULT '未完了', 
+    progress INTEGER DEFAULT 0,  -- 進捗度を追加
     FOREIGN KEY (user_id) REFERENCES users(id)
 );

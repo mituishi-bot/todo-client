@@ -111,6 +111,7 @@ def get_tasks(current_user_id):
 
 
 # 新しいタスクを作成
+# 新しいタスクを作成
 @app.route('/tasks', methods=['POST'])
 @token_required
 def add_task(current_user_id):
@@ -120,6 +121,7 @@ def add_task(current_user_id):
     due_date = data.get('due_date')
     status = data.get('status', '未完了')
     priority = data.get('priority', 'Medium')  
+    progress = data.get('progress', 0)  # 進捗度を取得
     done = False
     
     if title and content:
@@ -127,15 +129,16 @@ def add_task(current_user_id):
             with psycopg.connect(**DB_CONFIG) as conn:
                 with conn.cursor() as cur:
                     cur.execute(
-                        "INSERT INTO tasks (user_id, title, content, done, due_date, status, priority) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id;",
-                        (current_user_id, title, content, done, due_date, status, priority)
+                        "INSERT INTO tasks (user_id, title, content, done, due_date, status, priority, progress) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id;",
+                        (current_user_id, title, content, done, due_date, status, priority, progress)
                     )
                     task_id = cur.fetchone()[0]
-            return jsonify({"id": task_id, "title": title, "content": content, "done": done, "due_date": due_date, "status": status, "priority": priority}), 201
+            return jsonify({"id": task_id, "title": title, "content": content, "done": done, "due_date": due_date, "status": status, "priority": priority, "progress": progress}), 201
         except Exception as e:
             return jsonify({"error": "タスクの追加に失敗しました。"}), 500
     else:
         return jsonify({"error": "タイトルと内容は必須です。"}), 400
+
 
 
 # タスクの完了状態を更新
@@ -177,6 +180,7 @@ def edit_task(current_user_id, task_id):
     content = data.get('content')
     due_date = data.get('due_date') if data.get('due_date') else None  # Noneに変換
     status = data.get('status')
+    progress = data.get('progress')
     priority = data.get('priority')
 
     with psycopg.connect(**DB_CONFIG) as conn:
@@ -188,14 +192,14 @@ def edit_task(current_user_id, task_id):
             cur.execute(
                 """
                 UPDATE tasks 
-                SET title = %s, content = %s, due_date = %s, status = %s, priority = %s 
+                SET title = %s, content = %s, due_date = %s, status = %s, priority = %s,progress = %s
                 WHERE id = %s AND user_id = %s;
                 """,
-                (title, content, due_date if due_date is not None else current_due_date, status, priority, task_id, current_user_id)
+                (title, content, due_date if due_date is not None else current_due_date, status, priority,progress, task_id, current_user_id)
             )
             conn.commit()
 
-    return jsonify({"id": task_id, "title": title, "content": content, "due_date": due_date or current_due_date, "status": status, "priority": priority}), 200
+    return jsonify({"id": task_id, "title": title, "content": content, "due_date": due_date or current_due_date, "status": status, "priority": priority,"progress": progress}), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
